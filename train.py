@@ -9,6 +9,7 @@ from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
 from azureml.core.run import Run
 from azureml.data.dataset_factory import TabularDatasetFactory
+import joblib 
 
 def clean_data(data):
     # Dict for cleaning data
@@ -69,6 +70,10 @@ def main():
     run.log("Max iterations:", np.int(args.max_iter))
 
     model = LogisticRegression(C=args.C, max_iter=args.max_iter).fit(x_train, y_train)
+
+    output_folder='./outputs'
+    os.makedirs(output_folder, exist_ok=True)    
+    joblib.dump(model, "./outputs/saved_model.joblib")
 
     accuracy = model.score(x_test, y_test)
     run.log("Accuracy", np.float(accuracy))
