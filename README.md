@@ -7,15 +7,16 @@ This model is then compared to an Azure AutoML run.
 
 ## Summary
 **Problem Statement**
-The data contains details about the clients of direct marketing campaigns of a Portuguese banking institution. The dataset contains various information about the client: demographic variables, presence of loans, last contact details, outcome of the previous marketing campaign, 
+The project uses the details about the clients of direct marketing campaigns of a Portuguese banking institution to determine if the clients are likely to subscribe to a bank term deposit. The dataset contains various information about the client: demographic variables, presence of loans, last contact details, outcome of the previous marketing campaign, employment and consumer information. Detailed description of the variables can be found here: https://archive.ics.uci.edu/ml/datasets/Bank+Marketing 
 
- to access if the product (bank term deposit) would be ('yes') or not ('no') subscribed.
-
-
+Problem statement: using the information about the client, assess whether the client will subscribe to a bank term deposit or not. The purpose of this analysis is to identify the most relevant clients for next marketing steps, and to increase bank profit by offering the term deposit product to the proper audience. 
 
 **Solution**
+The solution uses two different approaches: 
+1.  scikit-learn pipeline based on logistic regression, with two optimized hyperparameters - regularuzation strength and maximum number of iterations to converge, with metric "accuracy"
+2. autoML model selection, with metric "weighted AUC" for model selection, and accuracy for comparing the models 
+The best performing model 
 
-**In 1-2 sentences, explain the problem statement: e.g "This dataset contains data about... we seek to predict..."**
 
 
 
