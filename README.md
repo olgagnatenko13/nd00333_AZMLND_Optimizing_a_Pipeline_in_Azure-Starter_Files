@@ -6,7 +6,18 @@ In this project, we build and optimize an Azure ML pipeline using the Python SDK
 This model is then compared to an Azure AutoML run.
 
 ## Summary
+**Problem Statement**
+The data contains details about the clients of direct marketing campaigns of a Portuguese banking institution. The dataset contains various information about the client: demographic variables, presence of loans, last contact details, outcome of the previous marketing campaign, 
+
+ to access if the product (bank term deposit) would be ('yes') or not ('no') subscribed.
+
+
+
+**Solution**
+
 **In 1-2 sentences, explain the problem statement: e.g "This dataset contains data about... we seek to predict..."**
+
+
 
 **In 1-2 sentences, explain the solution: e.g. "The best performing model was a ..."**
 
