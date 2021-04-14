@@ -7,37 +7,106 @@ This model is then compared to an Azure AutoML run.
 
 ## Summary
 **Problem Statement**
+
 The project uses the details about the clients of direct marketing campaigns of a Portuguese banking institution to determine if the clients are likely to subscribe to a bank term deposit. The dataset contains various information about the client: demographic variables, presence of loans, last contact details, outcome of the previous marketing campaign, employment and consumer information. Detailed description of the variables can be found here: https://archive.ics.uci.edu/ml/datasets/Bank+Marketing 
 
 Problem statement: using the information about the client, assess whether the client will subscribe to a bank term deposit or not. The purpose of this analysis is to identify the most relevant clients for next marketing steps, and to increase bank profit by offering the term deposit product to the proper audience. 
 
 **Solution**
+
 The solution uses two different approaches: 
-1.  scikit-learn pipeline based on logistic regression, with two optimized hyperparameters - regularuzation strength and maximum number of iterations to converge, with metric "accuracy"
-2. autoML model selection, with metric "weighted AUC" for model selection, and accuracy for comparing the models 
-The best performing model 
+1.  scikit-learn pipeline based on logistic regression, with two optimized hyperparameters - regularization strength and maximum number of iterations to converge, with metric "accuracy"
+2. autoML model selection, with metric "weighted AUC" for model selection, and "accuracy" for comparing the models 
 
-
-
-
-**In 1-2 sentences, explain the solution: e.g. "The best performing model was a ..."**
+The best performing model is VotingEnsemble, with accuracy on the test dataset being **0.9183**.
+![Confusion matrix for the VotingEnsemble model:](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/automl_confusion_matrix.png)
 
 ## Scikit-learn Pipeline
-**Explain the pipeline architecture, including data, hyperparameter tuning, and classification algorithm.**
+### Pipeline Architecture 
+Scikit-learn pipeline searches for the best performing model using the **logistic regression** algorithm, with two hyperparameters: 
+- Inverse of regularization stregth "--C"
+- Maximum number of iterations to converge "--max_iter"
 
-**What are the benefits of the parameter sampler you chose?**
+As a first step, we perform data cleaning and one hot encoding:
+- rows with "na" values are dropped
+- the following columns are encoded using one hot encoding: "job", "marital", "default", "housing", "loan", "education", "poutcome", "y" (the column describing the target outcome)
+- months and days of week are replaced with relevant numbers ("month" and "day_of_week" column respectively)
 
-**What are the benefits of the early stopping policy you chose?**
+Data is split into train (75%) and test (25%) datasets.
+
+Hyperparameter tuning is performed for both hyperparameters (explained in more detail in the next section). 
+Models are evaluated by predicting "y" column values for test dataset, and computing the accuracy compared to the iniial "y" values. 
+
+The best performing model:
+- has accuracy equal to **0.9104**
+- regularization strength hyperparameter: **0.234**
+- maximum iterations: **75**
+
+### Parameter sampler 
+The selected parameter sampler is **random sampling**. This sampler is recommended for [initial search in hyperparameter space](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters). It also supports early stopping policies to terminate low-performing runs, and works with both discrete and continuous hyperparameters.
+
+For regularization strength, **uniform** range is selected since the parameter ranges from 0 to 1. 
+For maximum iterations, the hyperparameter is limited to a discrete choice from the following numbers: 10, 25, 50, 75, 100. This is done to prevent excessively long hyperdrive runs, and to optimize resource usage.
+
+### Early stopping policy 
+The selected early stopping policy is **BanditPolicy** with slack factor of 0.1, evaluation interval = 1 and evaluation starting after 5 first intervals. 
+
+This early stopping policy allows to perform near-aggressive cuts of poorly performing runs. It is selected to optimize the use of resources, and to reduce the overall Hyperdrive run time. 
+
+### Results of HyperDrive run 
+
+![Best model metrics](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/hd_model_parameters.png)
+
+![Accuracy of different models](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/hd_model_accuracy.png)
+
+
+![Hyperparameters and accuracy for different runs](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/hd_runs_accuracy.png)
 
 ## AutoML
-**In 1-2 sentences, describe the model and hyperparameters generated by AutoML.**
+The best performing model generated by AutoML is **VotingEnsemble** with accuracy equal to **0.9183** (on the test set). 
+Model hyperparameters are:
+- 
+- 
+-  
+
+Top 10 features idenified by the model as the most important are:
+- duration (last contact duration, in seconds - used for benchmark purposes, and should not be viewed as a key characteristic)
+- unemployed (type of job == "unemployed")
+- emp.var.rate (employment variation rate - quarterly indicator)
+- cons.conf.idx (consumer confidence index - monthly indicator)
+- euribor3m (euribor 3 month rate - daily indicator)
+- pdays (number of days that passed by after the client was last contacted from a previous campaign)
+- cons.price.idx (consumer price index - monthly indicator)
+- age
+- poutcome (outcome of the previous marketing campaign)
+- month (last contact month of year)
+
+### Results of AutoML run 
+![Model metrics](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/automl_model_metrics.png)
+
+![Top 10 features](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/automl_model_explanation.png)
+
+![Lift curve](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/automl_lift_curve.png)
+
+![Calibration curve](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/automl_calibration_curve.png)
+
+![Precision-recall](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/automl_precision_recall.png)
+
+![ROC](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/automl_roc.png)
+
 
 ## Pipeline comparison
-**Compare the two models and their performance. What are the differences in accuracy? In architecture? If there was a difference, why do you think there was one?**
+Overall, VotingEnsemble model built by AutoML is more efficient compared to Hyperdrive run for logistic regression. 
+Accuracy of AutoML model is **0.9183**, while accuracy of scikit-learn model is **0.9104**.
+
+It is indeed more efficient to combine the results of several models instead of using one model, so this result is expected. The key difference is the architecture: VotingEnsemble uses the results provided by multiple algorithms, and logistic regression relies only on its main algorithm. 
+
+It is important to note that the difference in accuracy is not that large as one would have expected. This means that logisic regression is an efficient algoritm for the selected problem. Further hyperpaameter tuning might provide even bette results for logistic regression model. 
 
 ## Future work
-**What are some areas of improvement for future experiments? Why might these improvements help the model?**
+For the logistic regression algorithm, it might be efficient to change the metric from "accuracy" to "AUC weighted" since the classes in the dataset are not balanced. In addition, more granular values can be added to the discrete set of values for "maximum iterations" hyperparameter. Grid Search parameter sampler may be applied to refine the selection of "maximum iterations".
+
+With regard to AutoML, increasing the duration of the experiment and the number of concurrent runs may produce better results.
 
 ## Proof of cluster clean up
-**If you did not delete your compute cluster in the code, please complete this section. Otherwise, delete this section.**
-**Image of cluster marked for deletion**
+![Cluster clean up in Jupyter notebook:](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/cluster_deletion.png)
