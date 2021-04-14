@@ -19,6 +19,7 @@ The solution uses two different approaches:
 2. autoML model selection, with metric "weighted AUC" for model selection, and "accuracy" for comparing the models 
 
 Pipeline architecture:
+
 ![Pipeline architecture](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/master/pipeline_architecture.png)
 
 The best performing model is VotingEnsemble, with accuracy on the test dataset being **0.9183**.
