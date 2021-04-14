@@ -18,6 +18,9 @@ The solution uses two different approaches:
 1.  scikit-learn pipeline based on logistic regression, with two optimized hyperparameters - regularization strength and maximum number of iterations to converge, with metric "accuracy"
 2. autoML model selection, with metric "weighted AUC" for model selection, and "accuracy" for comparing the models 
 
+Pipeline architecture:
+![Pipeline architecture](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/master/pipeline_architecture.png)
+
 The best performing model is VotingEnsemble, with accuracy on the test dataset being **0.9183**.
 ![Confusion matrix for the VotingEnsemble model:](https://raw.githubusercontent.com/olgagnatenko13/nd00333_AZMLND_Optimizing_a_Pipeline_in_Azure-Starter_Files/project-working/azureml_screenshots/automl_confusion_matrix.png)
 
